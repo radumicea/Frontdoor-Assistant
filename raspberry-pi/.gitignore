@@ -1,0 +1,5 @@
+/output
+/training
+/validation
+__pycache__/
+app.config

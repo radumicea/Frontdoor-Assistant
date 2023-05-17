@@ -1,0 +1,8 @@
+dlib
+face-recognition
+numpy
+Pillow
+gTTS
+azure-storage-blob
+azure-iot-device
+configparser
