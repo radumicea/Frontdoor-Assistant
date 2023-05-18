@@ -1,13 +1,17 @@
-package iiotca.frontdoorassistant.ui.login
+package iiotca.frontdoorassistant.ui.authenticate.login
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import iiotca.frontdoorassistant.App
 import iiotca.frontdoorassistant.R
@@ -15,25 +19,36 @@ import iiotca.frontdoorassistant.afterTextChanged
 import iiotca.frontdoorassistant.data.DataSourceHelper
 import iiotca.frontdoorassistant.data.Repository
 import iiotca.frontdoorassistant.data.Result
-import iiotca.frontdoorassistant.databinding.ActivityLoginBinding
+import iiotca.frontdoorassistant.databinding.FragmentLoginBinding
 import iiotca.frontdoorassistant.hideKeyboard
 import iiotca.frontdoorassistant.ui.SharedViewModel
+import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModel
+import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModelFactory
 import iiotca.frontdoorassistant.ui.main.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class LoginActivity : AppCompatActivity() {
-
-    private lateinit var loginViewModel: LoginViewModel
+class LoginFragment : Fragment() {
+    private lateinit var inflater: LayoutInflater
+    private lateinit var viewModel: AuthenticateViewModel
     private lateinit var sharedViewModel: SharedViewModel
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: FragmentLoginBinding
+    private lateinit var navController: NavController
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        this.inflater = inflater
+        navController = findNavController()
+        return binding.root
+    }
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val preferences =
             App.getSharedPreferences(getString(R.string.preference_file_key))
@@ -52,10 +67,10 @@ class LoginActivity : AppCompatActivity() {
 
             when (ok) {
                 is Result.Success -> {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(context, MainActivity::class.java))
 
-                    finish()
-                    setResult(Activity.RESULT_OK)
+                    requireActivity().finish()
+                    requireActivity().setResult(Activity.RESULT_OK)
                 }
                 is Result.Error -> {
                     with(
@@ -72,48 +87,40 @@ class LoginActivity : AppCompatActivity() {
         val userName = binding.userName.editText!!
         val password = binding.password.editText!!
         val loginButton = binding.loginButton
+        val forgotPassword = binding.forgotPassword
 
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
-        loginViewModel =
+        viewModel =
             ViewModelProvider(
                 this,
-                LoginViewModelFactory(sharedViewModel)
-            )[LoginViewModel::class.java]
+                AuthenticateViewModelFactory(sharedViewModel)
+            )[AuthenticateViewModel::class.java]
 
-        loginViewModel.loginFormState.observe(this@LoginActivity) { loginState ->
-            // disable login button unless both userName / password is valid
-            loginButton.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                userName.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        }
-
-        loginViewModel.loginError.observe(this@LoginActivity) { loginError ->
+        viewModel.loginError.observe(viewLifecycleOwner) { loginError ->
             if (loginError != null) {
                 binding.lockIcon.visibility = View.VISIBLE
                 binding.loginTextView.visibility = View.VISIBLE
                 binding.userName.visibility = View.VISIBLE
                 binding.password.visibility = View.VISIBLE
                 binding.loginButton.visibility = View.VISIBLE
+                binding.forgotPassword.visibility = View.VISIBLE
                 Snackbar.make(binding.root, loginError, Snackbar.LENGTH_SHORT).show()
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-                setResult(Activity.RESULT_OK)
+                Snackbar.make(binding.root, R.string.success, Snackbar.LENGTH_SHORT).show()
+                startActivity(Intent(context, MainActivity::class.java))
+                requireActivity().finish()
+                requireActivity().setResult(Activity.RESULT_OK)
             }
         }
 
-        sharedViewModel.isLoading.observe(this@LoginActivity) {
+        sharedViewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.lockIcon.visibility = View.GONE
                 binding.loginTextView.visibility = View.GONE
                 binding.userName.visibility = View.GONE
                 binding.password.visibility = View.GONE
                 binding.loginButton.visibility = View.GONE
+                binding.forgotPassword.visibility = View.GONE
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
@@ -121,12 +128,12 @@ class LoginActivity : AppCompatActivity() {
         }
 
         userName.afterTextChanged {
-            loginViewModel.loginDataChanged(userName.text.toString(), password.text.toString())
+            viewModel.loginDataChanged(userName, password, loginButton)
         }
 
         password.apply {
             afterTextChanged {
-                loginViewModel.loginDataChanged(userName.text.toString(), password.text.toString())
+                viewModel.loginDataChanged(userName, password, loginButton)
             }
 
             setOnEditorActionListener { _, actionId, _ ->
@@ -141,14 +148,15 @@ class LoginActivity : AppCompatActivity() {
             loginButton.setOnClickListener {
                 handleLogin(userName.text.toString(), password.text.toString())
             }
+
+            forgotPassword.setOnClickListener {
+                navController.navigate(R.id.action_navigate_to_change_password)
+            }
         }
     }
 
     private fun handleLogin(userName: String, password: String) {
         hideKeyboard()
-        lifecycleScope.launch(Dispatchers.IO) { loginViewModel.login(userName, password) }
-    }
-
-    override fun onBackPressed() {
+        lifecycleScope.launch(Dispatchers.IO) { viewModel.login(userName, password) }
     }
 }

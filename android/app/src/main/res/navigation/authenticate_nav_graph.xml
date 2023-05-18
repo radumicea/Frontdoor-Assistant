@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/destination_login">
+    <action
+        android:id="@+id/action_navigate_to_change_password"
+        app:destination="@id/destination_change_password" />
+
+    <fragment
+        android:id="@+id/destination_change_password"
+        android:name="iiotca.frontdoorassistant.ui.authenticate.changepassword.ChangePasswordFragment"
+        android:label="Change Password"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
+        android:id="@+id/destination_login"
+        android:name="iiotca.frontdoorassistant.ui.authenticate.login.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login" />
+</navigation>
