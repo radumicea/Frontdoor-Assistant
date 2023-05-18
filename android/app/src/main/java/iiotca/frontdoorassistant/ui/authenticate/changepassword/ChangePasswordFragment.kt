@@ -14,16 +14,13 @@ import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.afterTextChanged
 import iiotca.frontdoorassistant.databinding.FragmentChangePasswordBinding
 import iiotca.frontdoorassistant.hideKeyboard
-import iiotca.frontdoorassistant.ui.SharedViewModel
 import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModel
-import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ChangePasswordFragment : Fragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var binding: FragmentChangePasswordBinding
-    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var viewModel: AuthenticateViewModel
 
     override fun onCreateView(
@@ -39,14 +36,9 @@ class ChangePasswordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
-        viewModel =
-            ViewModelProvider(
-                this,
-                AuthenticateViewModelFactory(sharedViewModel)
-            )[AuthenticateViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
 
-        sharedViewModel.isLoading.observe(viewLifecycleOwner) {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.lockIcon.visibility = View.GONE
                 binding.changePasswordTextView.visibility = View.GONE

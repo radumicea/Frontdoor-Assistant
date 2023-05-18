@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace Api.DataAccessors;
 
@@ -18,10 +19,10 @@ public sealed class StorageAccessor
         return container;
     }
 
-    public async Task SaveBlob(string containerName, Stream stream, string fileName)
+    public async Task SaveBlob(string containerName, Stream stream, string blobName)
     {
         var container = await CreateContainerIfNotExists(containerName);
-        var blob = container.GetBlobClient(fileName);
+        var blob = container.GetBlobClient(blobName);
         if (await blob.ExistsAsync())
             return;
 
@@ -30,24 +31,28 @@ public sealed class StorageAccessor
         await stream.DisposeAsync();
     }
 
-    public async Task DeleteBlobs(string containerName, string name)
+    public async Task DeleteBlobs(string containerName, string folderName)
     {
         var container = await CreateContainerIfNotExists(containerName);
-        await foreach (var blob in container.GetBlobsAsync(prefix: name))
+        await foreach (var blob in container.GetBlobsAsync(prefix: folderName))
         {
-            await container.DeleteBlobAsync(blob.Name);
+            await container.DeleteBlobIfExistsAsync(blob.Name, DeleteSnapshotsOption.IncludeSnapshots);
         }
     }
 
-    public async Task<Stream> GetBlob(string containerName, string fileName)
+    public async Task<IEnumerable<(string fileName, MemoryStream stream)>> GetBlobs(string containerName, string folderName)
     {
-        var containerClient = _blobService.GetBlobContainerClient(containerName);
-        var blobClient = containerClient.GetBlobClient(fileName);
+        var container = await CreateContainerIfNotExists(containerName);
+        var res = new List<(string fileName, MemoryStream stream)>();
 
-        var stream = new MemoryStream();
-        await blobClient.DownloadToAsync(stream);
+        await foreach (var blob in container.GetBlobsAsync(prefix: folderName))
+        {
+            var blobClient = container.GetBlobClient(blob.Name);
+            var stream = new MemoryStream();
+            await blobClient.DownloadToAsync(stream);
+            res.Add((blob.Name, stream ));
+        }
 
-        stream.Position = 0;
-        return stream;
+        return res;
     }
 }

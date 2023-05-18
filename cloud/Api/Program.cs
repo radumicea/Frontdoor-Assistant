@@ -1,6 +1,5 @@
 using Api.Controllers;
 using Api.DataAccessors;
-using Api.Middlewares;
 using Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -94,29 +93,6 @@ builder.Services.AddSwaggerGen(static c =>
             new List<string>()
         }
     });
-
-    c.AddSecurityDefinition("Api-Key", new OpenApiSecurityScheme
-    {
-        Description = "Enter your Api Key below:",
-        Name = "Api-Key",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Api-Key"
-                }
-            },
-            new List<string>()
-        }
-    });
 });
 
 builder.Services.AddScoped<AppDbContext>();
@@ -152,8 +128,6 @@ app.UseCors(myPolicy);
 // Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 

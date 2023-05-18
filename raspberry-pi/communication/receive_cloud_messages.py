@@ -5,7 +5,7 @@ import time
 
 sys.path.append('.')
 
-from shared.config_helpers import *
+from utils.config_helpers import *
 from facial_recognition import facial_recognition
 
 

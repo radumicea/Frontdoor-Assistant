@@ -8,12 +8,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.databinding.ActivityAuthenticateBinding
-import iiotca.frontdoorassistant.ui.SharedViewModel
 
 class AuthenticateActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuthenticateBinding
     private lateinit var navController: NavController
-    private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var viewModel: AuthenticateViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,16 +20,17 @@ class AuthenticateActivity : AppCompatActivity() {
         binding = ActivityAuthenticateBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
 
         onBackPressedDispatcher.addCallback(
             this@AuthenticateActivity,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (sharedViewModel.isLoading.value == true) return
+                    if (viewModel.isLoading.value == true) return
                     navController.navigateUp()
                 }
             })

@@ -9,17 +9,19 @@ import iiotca.frontdoorassistant.App.Companion.getString
 import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.data.AuthenticateDataSource
 import iiotca.frontdoorassistant.data.Result
-import iiotca.frontdoorassistant.ui.SharedViewModel
 
-class AuthenticateViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() {
+class AuthenticateViewModel : ViewModel() {
     private val _loginError = MutableLiveData<Int?>()
     val loginError: LiveData<Int?> = _loginError
 
     private val _changePasswordError = MutableLiveData<Int?>()
     val changePasswordError: LiveData<Int?> = _changePasswordError
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun login(userName: String, password: String) {
-        sharedViewModel.setLoading()
+        _isLoading.postValue(true)
         when (val res = AuthenticateDataSource.login(userName, password)) {
             is Result.Success -> {
                 _loginError.postValue(null)
@@ -32,11 +34,11 @@ class AuthenticateViewModel(private val sharedViewModel: SharedViewModel) : View
                 }
             }
         }
-        sharedViewModel.resetLoading()
+        _isLoading.postValue(false)
     }
 
     fun changePassword(userName: String, oldPassword: String, newPassword: String) {
-        sharedViewModel.setLoading()
+        _isLoading.postValue(true)
         when (val res = AuthenticateDataSource.changePassword(userName, oldPassword, newPassword)) {
             is Result.Success -> {
                 _changePasswordError.postValue(null)
@@ -49,7 +51,7 @@ class AuthenticateViewModel(private val sharedViewModel: SharedViewModel) : View
                 }
             }
         }
-        sharedViewModel.resetLoading()
+        _isLoading.postValue(false)
     }
 
     fun loginDataChanged(userName: EditText, password: EditText, button: Button) {

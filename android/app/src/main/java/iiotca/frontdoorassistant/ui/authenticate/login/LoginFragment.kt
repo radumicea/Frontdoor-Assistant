@@ -21,9 +21,7 @@ import iiotca.frontdoorassistant.data.Repository
 import iiotca.frontdoorassistant.data.Result
 import iiotca.frontdoorassistant.databinding.FragmentLoginBinding
 import iiotca.frontdoorassistant.hideKeyboard
-import iiotca.frontdoorassistant.ui.SharedViewModel
 import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModel
-import iiotca.frontdoorassistant.ui.authenticate.AuthenticateViewModelFactory
 import iiotca.frontdoorassistant.ui.main.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +30,6 @@ import kotlinx.coroutines.runBlocking
 class LoginFragment : Fragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var viewModel: AuthenticateViewModel
-    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var binding: FragmentLoginBinding
     private lateinit var navController: NavController
 
@@ -89,12 +86,7 @@ class LoginFragment : Fragment() {
         val loginButton = binding.loginButton
         val forgotPassword = binding.forgotPassword
 
-        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
-        viewModel =
-            ViewModelProvider(
-                this,
-                AuthenticateViewModelFactory(sharedViewModel)
-            )[AuthenticateViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
 
         viewModel.loginError.observe(viewLifecycleOwner) { loginError ->
             if (loginError != null) {
@@ -113,7 +105,7 @@ class LoginFragment : Fragment() {
             }
         }
 
-        sharedViewModel.isLoading.observe(viewLifecycleOwner) {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.lockIcon.visibility = View.GONE
                 binding.loginTextView.visibility = View.GONE

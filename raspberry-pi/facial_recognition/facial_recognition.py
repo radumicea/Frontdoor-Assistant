@@ -1,3 +1,4 @@
+import base64
 from collections import Counter
 import os
 import face_recognition
@@ -6,9 +7,11 @@ import pickle
 import shutil
 import sys
 
+import requests
+
 sys.path.append('.')
 
-from storage_accessor.StorageAccessor import StorageAccessor
+from utils.config_helpers import read_config
 
 
 DEFAULT_ENCODINGS_PATH = Path('output/encodings.pkl')
@@ -19,7 +22,7 @@ Path('output').mkdir(exist_ok=True)
 def encode_new_faces(
     name: str, model: str = 'hog', encodings_location: Path = DEFAULT_ENCODINGS_PATH
 ) -> None:
-    StorageAccessor.save_then_delete_blobs(name)
+    __save_then_clear_blacklist(name)
 
     names = []
     encodings = []
@@ -100,3 +103,23 @@ def __recognize_face(unknown_encoding, loaded_encodings):
     )
     if votes:
         return votes.most_common(1)[0][0]
+    
+
+def __save_then_clear_blacklist(folder_name: str) -> None:
+    Path(folder_name).mkdir(exist_ok=True)
+
+    url = read_config('ApiAddress')
+    user_name = read_config('UserName')
+    password = read_config('Password')
+
+    files = requests.post(f'{url}/Faces/FetchThenClearBlacklist',
+                          json={
+                              'userName': user_name,
+                              'password': password
+                              },
+                          params={'folderName': folder_name}, verify=False).json()
+
+    for file in files:
+        file = file['result']
+        with open(file['fileName'], 'wb') as f:
+            f.write(base64.b64decode(file['data']))
