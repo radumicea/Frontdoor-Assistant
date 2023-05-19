@@ -73,11 +73,17 @@ object AuthenticateDataSource {
         }
     }
 
-    fun logout(): Result<Nothing?> {
-        val (_, response, result) = Fuel.post("$protocol://$address${BuildConfig.LOGOUT_ROUTE}")
+    fun logOut(): Result<Nothing?> {
+        val (_, response, result) = Fuel.get("$protocol://$address${BuildConfig.LOGOUT_ROUTE}")
             .authentication().bearer(Repository.token!!).response()
 
         return if (result.component2() == null || response.statusCode == 401) {
+            Repository.token = null
+            Repository.refreshToken = null
+            with(App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()) {
+                clear()
+                apply()
+            }
             Result.Success(null)
         } else {
             Result.Error(response.statusCode)

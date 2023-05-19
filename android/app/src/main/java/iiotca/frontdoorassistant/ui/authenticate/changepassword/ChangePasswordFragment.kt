@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.afterTextChanged
 import iiotca.frontdoorassistant.databinding.FragmentChangePasswordBinding
 import iiotca.frontdoorassistant.hideKeyboard
@@ -37,6 +36,7 @@ class ChangePasswordFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
+        viewModel.init()
 
         viewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
@@ -51,11 +51,6 @@ class ChangePasswordFragment : Fragment() {
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
-            }
-        }
-
-        viewModel.changePasswordError.observe(viewLifecycleOwner) { errorId ->
-            if (errorId != null) {
                 binding.lockIcon.visibility = View.VISIBLE
                 binding.changePasswordTextView.visibility = View.VISIBLE
                 binding.userName.visibility = View.VISIBLE
@@ -64,9 +59,13 @@ class ChangePasswordFragment : Fragment() {
                 binding.confirmPassword.visibility = View.VISIBLE
                 binding.changePasswordButton.visibility = View.VISIBLE
                 binding.cancelButton.visibility = View.VISIBLE
+            }
+        }
+
+        viewModel.changePasswordError.observe(viewLifecycleOwner) { errorId ->
+            if (errorId != null) {
                 Snackbar.make(binding.root, errorId, Snackbar.LENGTH_SHORT).show()
             } else {
-                Snackbar.make(binding.root, R.string.success, Snackbar.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
         }

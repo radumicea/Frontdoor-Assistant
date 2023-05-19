@@ -11,14 +11,23 @@ import iiotca.frontdoorassistant.data.AuthenticateDataSource
 import iiotca.frontdoorassistant.data.Result
 
 class AuthenticateViewModel : ViewModel() {
-    private val _loginError = MutableLiveData<Int?>()
-    val loginError: LiveData<Int?> = _loginError
+    private lateinit var _loginError: MutableLiveData<Int?>
+    val loginError: LiveData<Int?>
+        get() = _loginError
 
-    private val _changePasswordError = MutableLiveData<Int?>()
-    val changePasswordError: LiveData<Int?> = _changePasswordError
+    private lateinit var _changePasswordError: MutableLiveData<Int?>
+    val changePasswordError: LiveData<Int?>
+        get() = _changePasswordError
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private lateinit var _isLoading: MutableLiveData<Boolean>
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
+    fun init() {
+        _loginError = MutableLiveData()
+        _changePasswordError = MutableLiveData()
+        _isLoading = MutableLiveData()
+    }
 
     fun login(userName: String, password: String) {
         _isLoading.postValue(true)
@@ -26,6 +35,7 @@ class AuthenticateViewModel : ViewModel() {
             is Result.Success -> {
                 _loginError.postValue(null)
             }
+
             is Result.Error -> {
                 if (res.code == 401) {
                     _loginError.postValue(R.string.wrong_credentials)

@@ -16,6 +16,7 @@
     <string name="wrong_credentials">Wrong username and/or password</string>
     <string name="login_failed">Login failed</string>
     <string name="change_password_failed">Change password failed</string>
+    <string name="log_out_failed">Log out failed</string>
     <string name="channel_id">"FRONTDOOR_ASSISTANT_BLACKLIST_CHANNEL_ID"</string>
     <string name="channel_name">"Frontdoor Assistant Blacklist Notification Channel"</string>
     <string name="channel_description">"Notification channel for Frontdoor Assistant Blacklist"</string>
@@ -29,4 +30,5 @@
     <string name="prompt_blacklist">Review and edit your blacklist</string>
     <string name="title_blacklist">Blacklist</string>
     <string name="greeting">Welcome Home!</string>
+    <string name="log_out">Log out</string>
 </resources>

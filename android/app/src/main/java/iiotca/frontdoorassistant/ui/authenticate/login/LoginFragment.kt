@@ -10,8 +10,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import iiotca.frontdoorassistant.App
 import iiotca.frontdoorassistant.R
@@ -31,7 +30,6 @@ class LoginFragment : Fragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var viewModel: AuthenticateViewModel
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +38,6 @@ class LoginFragment : Fragment() {
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         this.inflater = inflater
-        navController = findNavController()
         return binding.root
     }
 
@@ -57,18 +54,19 @@ class LoginFragment : Fragment() {
         if (tokenPreference != null && refreshTokenPreference != null) {
             Repository.token = tokenPreference
             Repository.refreshToken = refreshTokenPreference
-            var ok: Result<Nothing?>
+            var res: Result<Nothing?>
             runBlocking(Dispatchers.IO) {
-                ok = DataSourceHelper.refreshToken(tokenPreference, refreshTokenPreference)
+                res = DataSourceHelper.refreshToken(tokenPreference, refreshTokenPreference)
             }
 
-            when (ok) {
+            when (res) {
                 is Result.Success -> {
                     startActivity(Intent(context, MainActivity::class.java))
 
                     requireActivity().finish()
                     requireActivity().setResult(Activity.RESULT_OK)
                 }
+
                 is Result.Error -> {
                     with(
                         App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()
@@ -87,18 +85,12 @@ class LoginFragment : Fragment() {
         val changePassword = binding.changePassword
 
         viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
+        viewModel.init()
 
-        viewModel.loginError.observe(viewLifecycleOwner) { loginError ->
-            if (loginError != null) {
-                binding.lockIcon.visibility = View.VISIBLE
-                binding.loginTextView.visibility = View.VISIBLE
-                binding.userName.visibility = View.VISIBLE
-                binding.password.visibility = View.VISIBLE
-                binding.loginButton.visibility = View.VISIBLE
-                binding.changePassword.visibility = View.VISIBLE
-                Snackbar.make(binding.root, loginError, Snackbar.LENGTH_SHORT).show()
+        viewModel.loginError.observe(viewLifecycleOwner) { errorId ->
+            if (errorId != null) {
+                Snackbar.make(binding.root, errorId, Snackbar.LENGTH_SHORT).show()
             } else {
-                Snackbar.make(binding.root, R.string.success, Snackbar.LENGTH_SHORT).show()
                 startActivity(Intent(context, MainActivity::class.java))
                 requireActivity().finish()
                 requireActivity().setResult(Activity.RESULT_OK)
@@ -116,6 +108,12 @@ class LoginFragment : Fragment() {
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
+                binding.lockIcon.visibility = View.VISIBLE
+                binding.loginTextView.visibility = View.VISIBLE
+                binding.userName.visibility = View.VISIBLE
+                binding.password.visibility = View.VISIBLE
+                binding.loginButton.visibility = View.VISIBLE
+                binding.changePassword.visibility = View.VISIBLE
             }
         }
 
@@ -142,7 +140,7 @@ class LoginFragment : Fragment() {
             }
 
             changePassword.setOnClickListener {
-                navController.navigate(R.id.action_navigate_to_change_password)
+                findNavController().navigate(R.id.action_navigate_to_change_password)
             }
         }
     }
