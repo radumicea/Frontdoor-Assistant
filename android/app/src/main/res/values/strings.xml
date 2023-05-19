@@ -8,6 +8,7 @@
     <string name="prompt_confirm_password">Confirm Password *</string>
     <string name="action_sign_in">Sign In</string>
     <string name="action_change_password">Change Password</string>
+    <string name="action_cancel">Cancel</string>
     <string name="change_password"><u>Change password</u></string>
     <string name="invalid_userName">Username can only have alphabetical characters and must be between 2 and 50 characters long</string>
     <string name="invalid_password">Password must be at least 6 characters long, and have at least one digit, one symbol, and one lowercase character.</string>

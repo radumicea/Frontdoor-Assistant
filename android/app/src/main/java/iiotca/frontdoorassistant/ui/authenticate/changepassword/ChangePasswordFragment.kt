@@ -47,6 +47,7 @@ class ChangePasswordFragment : Fragment() {
                 binding.newPassword.visibility = View.GONE
                 binding.confirmPassword.visibility = View.GONE
                 binding.changePasswordButton.visibility = View.GONE
+                binding.cancelButton.visibility = View.GONE
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
@@ -62,6 +63,7 @@ class ChangePasswordFragment : Fragment() {
                 binding.newPassword.visibility = View.VISIBLE
                 binding.confirmPassword.visibility = View.VISIBLE
                 binding.changePasswordButton.visibility = View.VISIBLE
+                binding.cancelButton.visibility = View.VISIBLE
                 Snackbar.make(binding.root, errorId, Snackbar.LENGTH_SHORT).show()
             } else {
                 Snackbar.make(binding.root, R.string.success, Snackbar.LENGTH_SHORT).show()
@@ -136,6 +138,10 @@ class ChangePasswordFragment : Fragment() {
                     oldPassword.text.toString(),
                     newPassword.text.toString()
                 )
+            }
+
+            binding.cancelButton.setOnClickListener {
+                findNavController().navigateUp()
             }
         }
     }
