@@ -88,10 +88,10 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/forgot_password"
+        android:id="@+id/change_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/forgot_password"
+        android:text="@string/change_password"
         android:textColor="#0000EE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/password" />

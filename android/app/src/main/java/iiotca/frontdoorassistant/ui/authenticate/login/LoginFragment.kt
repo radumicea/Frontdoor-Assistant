@@ -84,7 +84,7 @@ class LoginFragment : Fragment() {
         val userName = binding.userName.editText!!
         val password = binding.password.editText!!
         val loginButton = binding.loginButton
-        val forgotPassword = binding.forgotPassword
+        val changePassword = binding.changePassword
 
         viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
 
@@ -95,7 +95,7 @@ class LoginFragment : Fragment() {
                 binding.userName.visibility = View.VISIBLE
                 binding.password.visibility = View.VISIBLE
                 binding.loginButton.visibility = View.VISIBLE
-                binding.forgotPassword.visibility = View.VISIBLE
+                binding.changePassword.visibility = View.VISIBLE
                 Snackbar.make(binding.root, loginError, Snackbar.LENGTH_SHORT).show()
             } else {
                 Snackbar.make(binding.root, R.string.success, Snackbar.LENGTH_SHORT).show()
@@ -112,7 +112,7 @@ class LoginFragment : Fragment() {
                 binding.userName.visibility = View.GONE
                 binding.password.visibility = View.GONE
                 binding.loginButton.visibility = View.GONE
-                binding.forgotPassword.visibility = View.GONE
+                binding.changePassword.visibility = View.GONE
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
@@ -141,7 +141,7 @@ class LoginFragment : Fragment() {
                 handleLogin(userName.text.toString(), password.text.toString())
             }
 
-            forgotPassword.setOnClickListener {
+            changePassword.setOnClickListener {
                 navController.navigate(R.id.action_navigate_to_change_password)
             }
         }
