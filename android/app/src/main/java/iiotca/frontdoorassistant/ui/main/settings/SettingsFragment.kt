@@ -17,8 +17,8 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.snackbar.Snackbar
-import iiotca.frontdoorassistant.MainDataSource
 import iiotca.frontdoorassistant.R
+import iiotca.frontdoorassistant.data.MainDataSource
 import iiotca.frontdoorassistant.data.Result
 import iiotca.frontdoorassistant.data.dto.Location
 import iiotca.frontdoorassistant.databinding.FragmentSettingsBinding

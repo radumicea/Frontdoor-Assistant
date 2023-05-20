@@ -1,10 +1,8 @@
-package iiotca.frontdoorassistant
+package iiotca.frontdoorassistant.data
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
-import iiotca.frontdoorassistant.data.DataSourceHelper
-import iiotca.frontdoorassistant.data.Repository
-import iiotca.frontdoorassistant.data.Result
+import iiotca.frontdoorassistant.BuildConfig
 import iiotca.frontdoorassistant.data.dto.Location
 import org.json.JSONObject
 
