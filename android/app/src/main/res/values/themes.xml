@@ -14,7 +14,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.FrontdoorAssistant.ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+    <style name="Theme.FrontdoorAssistant.ActionBarTheme" parent="Theme.FrontdoorAssistant.NoActionBar">
         <!-- THIS is where you can color the arrow and the overflow button! -->
         <item name="colorControlNormal">@color/white
         </item> <!-- sets the color for the back arrow -->

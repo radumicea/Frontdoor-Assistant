@@ -79,6 +79,10 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp()
+    }
+
     fun logOut(item: MenuItem) {
         lifecycleScope.launch(Dispatchers.IO) { sharedViewModel.logOut() }
     }

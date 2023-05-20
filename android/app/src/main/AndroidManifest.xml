@@ -4,7 +4,7 @@
     package="iiotca.frontdoorassistant">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:name="iiotca.frontdoorassistant.App"
@@ -14,7 +14,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FrontdoorAssistant.NoActionBar">
+        android:theme="@style/Theme.FrontdoorAssistant.ActionBarTheme">
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />

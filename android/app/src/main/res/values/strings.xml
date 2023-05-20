@@ -31,4 +31,6 @@
     <string name="title_blacklist">Blacklist</string>
     <string name="greeting">Welcome Home!</string>
     <string name="log_out">Log out</string>
+    <string name="body_set_location">Set location to receive meteo alerts as current location</string>
+    <string name="title_set_location">Set location</string>
 </resources>

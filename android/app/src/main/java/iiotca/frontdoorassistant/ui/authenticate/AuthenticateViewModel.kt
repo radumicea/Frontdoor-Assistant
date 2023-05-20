@@ -53,6 +53,7 @@ class AuthenticateViewModel : ViewModel() {
             is Result.Success -> {
                 _changePasswordError.postValue(null)
             }
+
             is Result.Error -> {
                 if (res.code == 401) {
                     _changePasswordError.postValue(R.string.wrong_credentials)

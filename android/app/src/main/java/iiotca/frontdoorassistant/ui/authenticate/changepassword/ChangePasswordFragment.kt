@@ -147,6 +147,12 @@ class ChangePasswordFragment : Fragment() {
 
     private fun handleChangePassword(userName: String, oldPassword: String, newPassword: String) {
         hideKeyboard()
-        lifecycleScope.launch(Dispatchers.IO) { viewModel.changePassword(userName, oldPassword, newPassword) }
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.changePassword(
+                userName,
+                oldPassword,
+                newPassword
+            )
+        }
     }
 }
