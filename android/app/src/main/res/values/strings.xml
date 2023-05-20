@@ -14,9 +14,7 @@
     <string name="invalid_password">Password must be at least 6 characters long, and have at least one digit, one symbol, and one lowercase character.</string>
     <string name="passwords_dont_match">Passwords don\'t match.</string>
     <string name="wrong_credentials">Wrong username and/or password</string>
-    <string name="login_failed">Login failed</string>
-    <string name="change_password_failed">Change password failed</string>
-    <string name="log_out_failed">Log out failed</string>
+    <string name="request_failed">Request failed</string>
     <string name="channel_id">"FRONTDOOR_ASSISTANT_BLACKLIST_CHANNEL_ID"</string>
     <string name="channel_name">"Frontdoor Assistant Blacklist Notification Channel"</string>
     <string name="channel_description">"Notification channel for Frontdoor Assistant Blacklist"</string>
@@ -31,6 +29,7 @@
     <string name="title_blacklist">Blacklist</string>
     <string name="greeting">Welcome Home!</string>
     <string name="log_out">Log out</string>
-    <string name="body_set_location">Set location to receive meteo alerts as current location</string>
+    <string name="body_set_location">Set location to receive weather alerts at current location</string>
     <string name="title_set_location">Set location</string>
+    <string name="session_expired_cannot_refresh">Session has expired and can not be refreshed. Please log in again.</string>
 </resources>

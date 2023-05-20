@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
-import iiotca.frontdoorassistant.App
 import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.afterTextChanged
 import iiotca.frontdoorassistant.data.DataSourceHelper
@@ -44,19 +43,10 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val preferences =
-            App.getSharedPreferences(getString(R.string.preference_file_key))
-        val tokenPreference =
-            preferences.getString(getString(R.string.preference_token), null)
-        val refreshTokenPreference =
-            preferences.getString(getString(R.string.preference_refresh_token), null)
-
-        if (tokenPreference != null && refreshTokenPreference != null) {
-            Repository.token = tokenPreference
-            Repository.refreshToken = refreshTokenPreference
+        if (Repository.token != "" && Repository.refreshToken != "") {
             var res: Result<Nothing?>
             runBlocking(Dispatchers.IO) {
-                res = DataSourceHelper.refreshToken(tokenPreference, refreshTokenPreference)
+                res = DataSourceHelper.refreshToken()
             }
 
             when (res) {
@@ -68,13 +58,10 @@ class LoginFragment : Fragment() {
                 }
 
                 is Result.Error -> {
-                    with(
-                        App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()
-                    ) {
-                        clear()
-                        apply()
-                    }
-                    Snackbar.make(binding.root, R.string.login_failed, Snackbar.LENGTH_SHORT).show()
+                    Repository.token = ""
+                    Repository.refreshToken = ""
+                    Snackbar.make(binding.root, R.string.request_failed, Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
         }

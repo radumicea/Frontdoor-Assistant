@@ -8,23 +8,22 @@ import iiotca.frontdoorassistant.data.AuthenticateDataSource
 import iiotca.frontdoorassistant.data.Result
 
 class SharedViewModel : ViewModel() {
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    val isLoading = MutableLiveData<Boolean>()
 
     private val _logOutError = MutableLiveData<Int?>()
     val logOutError: LiveData<Int?> = _logOutError
 
     fun logOut() {
-        _isLoading.postValue(true)
+        isLoading.postValue(true)
         when (AuthenticateDataSource.logOut()) {
             is Result.Success -> {
                 _logOutError.postValue(null)
             }
 
             else -> {
-                _logOutError.postValue(R.string.log_out_failed)
+                _logOutError.postValue(R.string.request_failed)
             }
         }
-        _isLoading.postValue(false)
+        isLoading.postValue(false)
     }
 }

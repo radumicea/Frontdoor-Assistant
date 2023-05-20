@@ -40,7 +40,7 @@ class AuthenticateViewModel : ViewModel() {
                 if (res.code == 401) {
                     _loginError.postValue(R.string.wrong_credentials)
                 } else {
-                    _loginError.postValue(R.string.login_failed)
+                    _loginError.postValue(R.string.request_failed)
                 }
             }
         }
@@ -58,7 +58,7 @@ class AuthenticateViewModel : ViewModel() {
                 if (res.code == 401) {
                     _changePasswordError.postValue(R.string.wrong_credentials)
                 } else {
-                    _changePasswordError.postValue(R.string.change_password_failed)
+                    _changePasswordError.postValue(R.string.request_failed)
                 }
             }
         }

@@ -3,9 +3,7 @@ package iiotca.frontdoorassistant.data
 import com.github.kittinunf.fuel.Fuel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
-import iiotca.frontdoorassistant.App
 import iiotca.frontdoorassistant.BuildConfig
-import iiotca.frontdoorassistant.R
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
@@ -14,8 +12,8 @@ object DataSourceHelper {
     private const val protocol = BuildConfig.PROTOCOL
     private const val address = BuildConfig.ADDRESS
 
-    fun refreshToken(token: String, refreshToken: String): Result<Nothing?> {
-        val statusCode = refreshTokenInternal(token, refreshToken)
+    fun refreshToken(): Result<Nothing?> {
+        val statusCode = refreshTokenInternal()
         return if (statusCode == 0) {
             Result.Success(null)
         } else {
@@ -25,10 +23,7 @@ object DataSourceHelper {
 
     fun <RT : Any?> handleError(code: Int, func: () -> Result<RT>): Result<RT> {
         return if (code == 401) {
-            val token = Repository.token ?: App.getString(R.string.preference_token)
-            val refreshToken =
-                Repository.refreshToken ?: App.getString(R.string.preference_refresh_token)
-            val statusCode = refreshTokenInternal(token, refreshToken)
+            val statusCode = refreshTokenInternal()
             if (statusCode != 0) {
                 Result.Error(statusCode)
             } else {
@@ -45,10 +40,7 @@ object DataSourceHelper {
         func: (input: PT) -> Result<RT>
     ): Result<RT> {
         return if (code == 401) {
-            val token = Repository.token ?: App.getString(R.string.preference_token)
-            val refreshToken =
-                Repository.refreshToken ?: App.getString(R.string.preference_refresh_token)
-            val statusCode = refreshTokenInternal(token, refreshToken)
+            val statusCode = refreshTokenInternal()
             if (statusCode != 0) {
                 Result.Error(statusCode)
             } else {
@@ -59,7 +51,7 @@ object DataSourceHelper {
         }
     }
 
-    private fun refreshTokenInternal(token: String, refreshToken: String): Int {
+    private fun refreshTokenInternal(): Int {
         val firebaseToken = try {
             Tasks.await(FirebaseMessaging.getInstance().token, 5, TimeUnit.SECONDS)
         } catch (e: Exception) {
@@ -67,7 +59,7 @@ object DataSourceHelper {
         }
 
         val json = JSONObject()
-        json.put("token", token).put("refreshToken", refreshToken)
+        json.put("token", Repository.token).put("refreshToken", Repository.refreshToken)
             .put("firebaseToken", firebaseToken)
 
         val (_, response, result) = Fuel.post("$protocol://$address${BuildConfig.REFRESH_TOKEN_ROUTE}")
@@ -82,18 +74,6 @@ object DataSourceHelper {
             val jsonRes = JSONObject(str!!)
             Repository.token = jsonRes.getString("token")
             Repository.refreshToken = jsonRes.getString("refreshToken")
-
-            with(App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()) {
-                putString(
-                    App.getString(R.string.preference_token),
-                    Repository.token
-                )
-                putString(
-                    App.getString(R.string.preference_refresh_token),
-                    Repository.refreshToken
-                )
-                apply()
-            }
         }
 
         return 0

@@ -4,9 +4,7 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
-import iiotca.frontdoorassistant.App
 import iiotca.frontdoorassistant.BuildConfig
-import iiotca.frontdoorassistant.R
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
@@ -35,17 +33,9 @@ object AuthenticateDataSource {
             Result.Error(response.statusCode)
         } else {
             val jsonRes = JSONObject(str!!)
-            val token = jsonRes.getString("token")
-            val refreshToken = jsonRes.getString("refreshToken")
 
-            with(App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()) {
-                putString(App.getString(R.string.preference_token), token)
-                putString(App.getString(R.string.preference_refresh_token), refreshToken)
-                apply()
-            }
-
-            Repository.token = token
-            Repository.refreshToken = refreshToken
+            Repository.token = jsonRes.getString("token")
+            Repository.refreshToken = jsonRes.getString("refreshToken")
 
             Result.Success(null)
         }
@@ -75,15 +65,11 @@ object AuthenticateDataSource {
 
     fun logOut(): Result<Nothing?> {
         val (_, response, result) = Fuel.get("$protocol://$address${BuildConfig.LOGOUT_ROUTE}")
-            .authentication().bearer(Repository.token!!).response()
+            .authentication().bearer(Repository.token).response()
 
         return if (result.component2() == null || response.statusCode == 401) {
-            Repository.token = null
-            Repository.refreshToken = null
-            with(App.getSharedPreferences(App.getString(R.string.preference_file_key)).edit()) {
-                clear()
-                apply()
-            }
+            Repository.token = ""
+            Repository.refreshToken = ""
             Result.Success(null)
         } else {
             Result.Error(response.statusCode)
