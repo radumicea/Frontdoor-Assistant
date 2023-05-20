@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.blacklist.setOnClickListener {
-            Snackbar.make(view, "Hello", Snackbar.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_navigate_to_blacklist)
         }
         binding.history.setOnClickListener {
             Snackbar.make(view, "Hello", Snackbar.LENGTH_SHORT).show()

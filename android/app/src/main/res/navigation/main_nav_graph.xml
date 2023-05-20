@@ -9,6 +9,16 @@
         android:id="@+id/action_navigate_to_settings"
         app:destination="@id/destination_settings" />
 
+    <action
+        android:id="@+id/action_navigate_to_blacklist"
+        app:destination="@id/destination_blacklist" />
+
+    <fragment
+        android:id="@+id/destination_home"
+        android:name="iiotca.frontdoorassistant.ui.main.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
     <fragment
         android:id="@+id/destination_settings"
         android:name="iiotca.frontdoorassistant.ui.main.settings.SettingsFragment"
@@ -16,8 +26,8 @@
         tools:layout="@layout/fragment_settings" />
 
     <fragment
-        android:id="@+id/destination_home"
-        android:name="iiotca.frontdoorassistant.ui.main.home.HomeFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/destination_blacklist"
+        android:name="iiotca.frontdoorassistant.ui.main.blacklist.BlacklistFragment"
+        android:label="Blacklist"
+        tools:layout="@layout/fragment_blacklist" />
 </navigation>

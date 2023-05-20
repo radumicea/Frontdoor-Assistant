@@ -2,6 +2,7 @@ package iiotca.frontdoorassistant.data
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
+import com.google.gson.Gson
 import iiotca.frontdoorassistant.BuildConfig
 import iiotca.frontdoorassistant.data.dto.Location
 import org.json.JSONObject
@@ -23,5 +24,18 @@ object MainDataSource {
         }
 
         return DataSourceHelper.handleError(response.statusCode, location, ::setLocation)
+    }
+
+    fun getBlacklistNames(): Result<MutableList<String>> {
+        val (_, response, result) = Fuel.get("$protocol://$address${BuildConfig.GET_BLACKLIST_NAMES_ROUTE}")
+            .authentication().bearer(Repository.token).responseString()
+
+        if (result.component2() == null) {
+            val blacklist =
+                Gson().fromJson<MutableList<String>>(result.component1(), MutableList::class.java)
+            return Result.Success(blacklist)
+        }
+
+        return DataSourceHelper.handleError(response.statusCode, ::getBlacklistNames)
     }
 }

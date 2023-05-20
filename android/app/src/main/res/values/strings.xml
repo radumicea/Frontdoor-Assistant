@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Frontdoor Assistant</string>
-    <string name="success">Success!</string>
+    <string name="success">Success</string>
     <string name="prompt_user_name">Username *</string>
     <string name="prompt_password">Password *</string>
     <string name="prompt_old_password">Old Password *</string>
@@ -11,8 +11,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="change_password"><u>Change password</u></string>
     <string name="invalid_userName">Username can only have alphabetical characters and must be between 2 and 50 characters long</string>
-    <string name="invalid_password">Password must be at least 6 characters long, and have at least one digit, one symbol, and one lowercase character.</string>
-    <string name="passwords_dont_match">Passwords don\'t match.</string>
+    <string name="invalid_password">Password must be at least 6 characters long, and have at least one digit, one symbol, and one lowercase character</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
     <string name="wrong_credentials">Wrong username and/or password</string>
     <string name="request_failed">Request failed</string>
     <string name="channel_id">"FRONTDOOR_ASSISTANT_BLACKLIST_CHANNEL_ID"</string>
@@ -31,5 +31,8 @@
     <string name="log_out">Log out</string>
     <string name="body_set_location">Set location to receive weather alerts at current location</string>
     <string name="title_set_location">Set location</string>
-    <string name="session_expired_cannot_refresh">Session has expired and can not be refreshed. Please log in again.</string>
+    <string name="session_expired_cannot_refresh">Session has expired and can not be refreshed. Please log in again</string>
+    <string name="error_fetch_location">Error fetching location</string>
+    <string name="please_allow_notifications">Please allow notifications through Android Settings</string>
+    <string name="please_allow_location">Please allow location through Android Settings</string>
 </resources>

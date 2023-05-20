@@ -81,7 +81,7 @@ class SettingsFragment : Fragment() {
         } else {
             sharedViewModel.isLoading.postValue(false)
             Toast.makeText(
-                context, "Please allow location through Android Settings.", Toast.LENGTH_LONG
+                context, R.string.please_allow_location, Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -120,7 +120,7 @@ class SettingsFragment : Fragment() {
             }
         }.addOnFailureListener {
             sharedViewModel.isLoading.postValue(false)
-            Snackbar.make(binding.root, "Error fetching location", Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, R.string.error_fetch_location, Toast.LENGTH_SHORT).show()
         }
     }
 }

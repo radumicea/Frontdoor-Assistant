@@ -91,6 +91,16 @@ public sealed class FacesController : ControllerBase
         return Ok();
     }
 
+    [Authorize]
+    [HttpGet]
+    [Route("GetBlacklistNames")]
+    public async Task<IActionResult> GetBlacklistNames()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var blacklist = JsonSerializer.Deserialize<string[]>(user.BlackListed)!;
+        return Ok(blacklist);
+    }
+
     [HttpPost]
     [Route("FetchThenClearBlacklist")]
     public async Task<IActionResult> FetchThenClearBlacklist([FromBody] UserDto dto, [FromQuery] string folderName)

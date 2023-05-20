@@ -63,7 +63,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        onBackPressedDispatcher.addCallback(this@MainActivity,
+        onBackPressedDispatcher.addCallback(
+            this@MainActivity,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (sharedViewModel.isLoading.value == true) return
@@ -107,7 +108,7 @@ class MainActivity : AppCompatActivity() {
     ) { isGranted: Boolean ->
         if (!isGranted) {
             Toast.makeText(
-                this, "Please allow notifications through Android Settings.", Toast.LENGTH_LONG
+                this, R.string.please_allow_notifications, Toast.LENGTH_LONG
             ).show()
         }
     }
