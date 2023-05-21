@@ -51,7 +51,7 @@ def encode_new_faces(
         pickle.dump(name_encodings, f)
 
 
-def remove_encoded_faces(name: str, encodings_location: Path = DEFAULT_ENCODINGS_PATH):
+def remove_encoded_faces(names: list[str], encodings_location: Path = DEFAULT_ENCODINGS_PATH):
     if (not Path.exists(encodings_location)):
         return
     
@@ -59,7 +59,7 @@ def remove_encoded_faces(name: str, encodings_location: Path = DEFAULT_ENCODINGS
     loaded_encodings = pickle.load(f)
     f.close()
     
-    filtered = list(filter(lambda x: x[0] != name, zip(loaded_encodings['names'], loaded_encodings['encodings'])))
+    filtered = list(filter(lambda x: x[0] not in names, zip(loaded_encodings['names'], loaded_encodings['encodings'])))
     loaded_encodings = { 'names': [i[0] for i in filtered], 'encodings': [i[1] for i in filtered] }
 
     with encodings_location.open(mode='wb') as f:

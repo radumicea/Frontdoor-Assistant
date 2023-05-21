@@ -20,8 +20,8 @@ def handle_encode_new_faces(name: str) -> None:
     facial_recognition.encode_new_faces(name)
 
 
-def handle_remove_encoded_faces(name: str) -> None:
-    facial_recognition.remove_encoded_faces(name)
+def handle_remove_encoded_faces(names: list[str]) -> None:
+    facial_recognition.remove_encoded_faces(names)
 
 
 def message_handler(message):

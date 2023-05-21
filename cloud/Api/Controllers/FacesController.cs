@@ -46,13 +46,10 @@ public sealed class FacesController : ControllerBase
         await Task.WhenAll(tasks);
 
         // Save person's folderName in the database
-        var blackList = JsonSerializer.Deserialize<List<string>>(user.BlackListed)!;
-        if (!blackList.Contains(folderName))
-        {
-            blackList.Add(folderName);
-            user.BlackListed = JsonSerializer.Serialize(blackList);
-            await _dbContext.SaveChangesAsync();
-        }
+        var blackList = JsonSerializer.Deserialize<SortedSet<string>>(user.BlackListed)!;
+        blackList.Add(folderName);
+        user.BlackListed = JsonSerializer.Serialize(blackList);
+        await _dbContext.SaveChangesAsync();
 
         // Send message to raspberry pi
         var msg = new Message(Encoding.ASCII.GetBytes($"{{\"method\":\"encode_new_faces\",\"args\":\"{folderName}\"}}"));
@@ -64,28 +61,26 @@ public sealed class FacesController : ControllerBase
     [Authorize]
     [HttpGet]
     [Route("RemoveFromBlacklist")]
-    public async Task<IActionResult> RemoveFromBlacklist([FromQuery] string folderName)
+    public async Task<IActionResult> RemoveFromBlacklist([FromQuery] string[] folderNames)
     {
-        if (folderName.StartsWith("_history_"))
+        folderNames = folderNames.Where(static x => !x.StartsWith("_history_")).ToArray();
+        if (folderNames.Length == 0)
             return BadRequest();
 
         var user = await _userManager.GetUserAsync(User);
 
         // Delete from blob
-        await _storage.DeleteBlobs(user.NormalizedUserName.ToLower(), folderName);
+        foreach (var folderName in folderNames)
+            await _storage.DeleteBlobs(user.NormalizedUserName.ToLower(), folderName);
 
         // Delete from database
-        var blackList = JsonSerializer.Deserialize<List<string>>(user.BlackListed)!;
-        int idx;
-        if ((idx = blackList.IndexOf(folderName)) >= 0)
-        {
-            blackList.RemoveAt(idx);
-            user.BlackListed = JsonSerializer.Serialize(blackList);
-            await _dbContext.SaveChangesAsync();
-        }
+        var blackList = JsonSerializer.Deserialize<SortedSet<string>>(user.BlackListed)!;
+        blackList.ExceptWith(folderNames);
+        user.BlackListed = JsonSerializer.Serialize(blackList);
+        await _dbContext.SaveChangesAsync();
 
         // Send message to raspberry pi
-        var msg = new Message(Encoding.ASCII.GetBytes($"{{\"method\":\"remove_encoded_faces\",\"args\":\"{folderName}\"}}"));
+        var msg = new Message(Encoding.ASCII.GetBytes($"{{\"method\":\"remove_encoded_faces\",\"args\":{JsonSerializer.Serialize(folderNames)}}}"));
         await _serviceClient.SendAsync(user.UserName, msg);
 
         return Ok();
