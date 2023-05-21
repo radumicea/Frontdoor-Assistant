@@ -38,4 +38,18 @@ object MainDataSource {
 
         return DataSourceHelper.handleError(response.statusCode, ::getBlacklistNames)
     }
+
+    fun removeFromBlacklist(items: List<String>): Result<Nothing?> {
+        val json = Gson().toJson(items)
+
+        val (_, response, result) = Fuel.post("$protocol://$address${BuildConfig.REMOVE_FROM_BLACKLIST_ROUTE}")
+            .authentication().bearer(Repository.token)
+            .header(mapOf("Content-Type" to "application/json")).body(json.toString()).response()
+
+        if (result.component2() == null) {
+            return Result.Success(null)
+        }
+
+        return DataSourceHelper.handleError(response.statusCode, items, ::removeFromBlacklist)
+    }
 }

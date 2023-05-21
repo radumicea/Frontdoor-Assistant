@@ -7,12 +7,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -42,6 +44,21 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         setupActionBarWithNavController(navController)
+
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.main_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                if (menuItem.itemId == R.id.action_log_out) {
+                    lifecycleScope.launch(Dispatchers.IO) { sharedViewModel.logOut() }
+                    return true
+                }
+
+                return false
+            }
+        })
 
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
@@ -75,20 +92,11 @@ class MainActivity : AppCompatActivity() {
         askNotificationPermission()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         if (sharedViewModel.isLoading.value == true) {
             return false
         }
         return navController.navigateUp()
-    }
-
-    fun logOut(item: MenuItem) {
-        lifecycleScope.launch(Dispatchers.IO) { sharedViewModel.logOut() }
     }
 
     private fun askNotificationPermission() {

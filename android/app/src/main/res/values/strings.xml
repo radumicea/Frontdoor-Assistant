@@ -35,4 +35,5 @@
     <string name="error_fetch_location">Error fetching location</string>
     <string name="please_allow_notifications">Please allow notifications through Android Settings</string>
     <string name="please_allow_location">Please allow location through Android Settings</string>
+    <string name="remove_from_blacklist">Remove from blacklist</string>
 </resources>

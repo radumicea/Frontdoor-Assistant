@@ -59,9 +59,9 @@ public sealed class FacesController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpPost]
     [Route("RemoveFromBlacklist")]
-    public async Task<IActionResult> RemoveFromBlacklist([FromQuery] string[] folderNames)
+    public async Task<IActionResult> RemoveFromBlacklist([FromBody] string[] folderNames)
     {
         folderNames = folderNames.Where(static x => !x.StartsWith("_history_")).ToArray();
         if (folderNames.Length == 0)
