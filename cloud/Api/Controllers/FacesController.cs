@@ -30,8 +30,8 @@ public sealed class FacesController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("AddToBlacklist")]
-    public async Task<IActionResult> AddToBlacklist([FromForm] IFormFileCollection files, [FromQuery] string folderName)
+    [Route("AddToBlacklist/{folderName}")]
+    public async Task<IActionResult> AddToBlacklist([FromForm(Name = "photos")] IFormFileCollection files, [FromRoute] string folderName)
     {
         if (folderName.StartsWith("_history_"))
             return BadRequest();

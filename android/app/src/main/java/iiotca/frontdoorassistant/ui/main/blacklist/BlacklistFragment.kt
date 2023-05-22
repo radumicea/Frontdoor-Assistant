@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
@@ -134,6 +135,10 @@ class BlacklistFragment : Fragment() {
                 markedItems.clear()
                 adapter.notifyDataSetChanged()
             }
+        }
+
+        binding.addButton.setOnClickListener {
+            findNavController().navigate(R.id.action_navigate_to_add_to_blacklist)
         }
 
         lifecycleScope.launch(Dispatchers.IO) {

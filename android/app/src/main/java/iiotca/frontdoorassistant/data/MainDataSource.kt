@@ -1,9 +1,11 @@
 package iiotca.frontdoorassistant.data
 
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.FileDataPart
 import com.github.kittinunf.fuel.core.extensions.authentication
 import com.google.gson.Gson
 import iiotca.frontdoorassistant.BuildConfig
+import iiotca.frontdoorassistant.data.dto.BlacklistEntry
 import iiotca.frontdoorassistant.data.dto.Location
 import org.json.JSONObject
 
@@ -51,5 +53,27 @@ object MainDataSource {
         }
 
         return DataSourceHelper.handleError(response.statusCode, items, ::removeFromBlacklist)
+    }
+
+    fun addToBlacklist(entry: BlacklistEntry): Result<Nothing?> {
+        var req =
+            Fuel.upload("$protocol://$address${BuildConfig.ADD_TO_BLACKLIST_ROUTE}/${entry.name}")
+
+        entry.paths.forEach { path ->
+            req = req.add(
+                FileDataPart.from(
+                    path = path,
+                    name = "photos"
+                )
+            )
+        }
+
+        val (_, response, result) = req.authentication().bearer(Repository.token).response()
+
+        if (result.component2() == null) {
+            return Result.Success(null)
+        }
+
+        return DataSourceHelper.handleError(response.statusCode, entry, ::addToBlacklist)
     }
 }

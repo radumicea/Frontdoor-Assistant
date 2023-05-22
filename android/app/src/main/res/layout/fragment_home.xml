@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/blacklist"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
@@ -84,9 +84,9 @@
                         android:textColor="@android:color/darker_gray"
                         tools:ignore="TextContrastCheck" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/history"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
@@ -130,10 +130,10 @@
                         android:textColor="@android:color/darker_gray"
                         tools:ignore="TextContrastCheck" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/settings"
             android:layout_width="340dp"
             android:layout_height="150dp"
@@ -176,7 +176,7 @@
                     android:textColor="@android:color/darker_gray"
                     tools:ignore="TextContrastCheck" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
     <ProgressBar

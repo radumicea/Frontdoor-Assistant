@@ -13,6 +13,10 @@
         android:id="@+id/action_navigate_to_blacklist"
         app:destination="@id/destination_blacklist" />
 
+    <action
+        android:id="@+id/action_navigate_to_add_to_blacklist"
+        app:destination="@id/destination_add_to_blacklist" />
+
     <fragment
         android:id="@+id/destination_home"
         android:name="iiotca.frontdoorassistant.ui.main.home.HomeFragment"
@@ -30,4 +34,10 @@
         android:name="iiotca.frontdoorassistant.ui.main.blacklist.BlacklistFragment"
         android:label="Blacklist"
         tools:layout="@layout/fragment_blacklist" />
+
+    <fragment
+        android:id="@+id/destination_add_to_blacklist"
+        android:name="iiotca.frontdoorassistant.ui.main.blacklist.AddToBlacklistFragment"
+        android:label="Add to blacklist"
+        tools:layout="@layout/fragment_add_to_blacklist" />
 </navigation>

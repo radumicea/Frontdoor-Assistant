@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
+    ) { isGranted ->
         if (!isGranted) {
             Toast.makeText(
                 this, R.string.please_allow_notifications, Toast.LENGTH_LONG

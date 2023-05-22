@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.data.MainDataSource
 import iiotca.frontdoorassistant.data.Result
+import iiotca.frontdoorassistant.data.dto.BlacklistEntry
 
 class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() {
     private lateinit var _getNamesResult: MutableLiveData<Result<MutableList<String>>>
@@ -13,9 +14,13 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
     private lateinit var _removeError: MutableLiveData<Int?>
     val removeError get() = _removeError
 
+    private lateinit var _addError: MutableLiveData<Int?>
+    val addError get() = _addError
+
     fun init() {
         _getNamesResult = MutableLiveData()
         _removeError = MutableLiveData()
+        _addError = MutableLiveData()
     }
 
     fun getBlacklistNames() {
@@ -49,6 +54,24 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
                     _removeError.postValue(R.string.session_expired_cannot_refresh)
                 } else {
                     _removeError.postValue(R.string.request_failed)
+                }
+            }
+        }
+        sharedViewModel.isLoading.postValue(false)
+    }
+
+    fun addToBlacklist(paths: List<String>, name: String) {
+        sharedViewModel.isLoading.postValue(true)
+        when (val res = MainDataSource.addToBlacklist(BlacklistEntry(paths, name))) {
+            is Result.Success -> {
+                _addError.postValue(null)
+            }
+
+            is Result.Error -> {
+                if (res.code == 401) {
+                    _addError.postValue(R.string.session_expired_cannot_refresh)
+                } else {
+                    _addError.postValue(R.string.request_failed)
                 }
             }
         }

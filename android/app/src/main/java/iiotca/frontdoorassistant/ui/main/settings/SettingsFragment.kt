@@ -75,7 +75,7 @@ class SettingsFragment : Fragment() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
+    ) { isGranted ->
         if (isGranted) {
             fetchAndSetLocation()
         } else {
