@@ -32,7 +32,7 @@ public sealed class FacesController : ControllerBase
     [Authorize]
     [HttpPost]
     [Route("AddToBlacklist/{folderName}")]
-    public async Task<IActionResult> AddToBlacklist([FromForm(Name = "photos")] IFormFileCollection files, [FromRoute] string folderName)
+    public async Task<IActionResult> AddToBlacklist([FromForm] IFormFileCollection photos, [FromRoute] string folderName)
     {
         if (folderName.StartsWith("_history_") || folderName.StartsWith("Unknown", StringComparison.InvariantCultureIgnoreCase))
             return BadRequest();
@@ -40,7 +40,7 @@ public sealed class FacesController : ControllerBase
         var user = await _userManager.GetUserAsync(User);
 
         // Save faces to blob storage
-        var tasks = files.Select(async f =>
+        var tasks = photos.Select(async f =>
         {
             await _storage.SaveBlob(user.NormalizedUserName.ToLower(), f.OpenReadStream(), $"{folderName}/{f.FileName}");
         });

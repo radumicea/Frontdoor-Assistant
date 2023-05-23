@@ -1,6 +1,7 @@
 import base64
 from collections import Counter
 import os
+import time
 import face_recognition
 from pathlib import Path
 import pickle
@@ -67,14 +68,16 @@ def remove_encoded_faces(names: list[str], encodings_location: Path = DEFAULT_EN
 
 
 def recognize_faces(
-    image_location: str,
+    image_path: str,
     model: str = 'hog',
     encodings_location: Path = DEFAULT_ENCODINGS_PATH,
 ) -> None:
+    time_stamp = int(time.time()) 
+
     with encodings_location.open(mode='rb') as f:
         loaded_encodings = pickle.load(f)
 
-    input_image = face_recognition.load_image_file(image_location)
+    input_image = face_recognition.load_image_file(image_path)
 
     input_face_locations = face_recognition.face_locations(
         input_image, model=model
@@ -89,7 +92,8 @@ def recognize_faces(
         name = __recognize_face(unknown_encoding, loaded_encodings)
         if not name:
             name = 'Unknown'
-        print(name, bounding_box)
+            
+        __do_request(name, time_stamp, image_path)
 
 
 def __recognize_face(unknown_encoding, loaded_encodings):
@@ -105,6 +109,18 @@ def __recognize_face(unknown_encoding, loaded_encodings):
         return votes.most_common(1)[0][0]
     
 
+def __do_request(name: str, time_stamp: int, image_path: str) -> None:
+    url = read_config('ApiAddress')
+    user_name = read_config('UserName')
+    password = read_config('Password')
+
+    with open(image_path, 'rb') as file:
+        file_dict = {'file': file}
+        form_data = {'userName': user_name, 'password': password, 'name': name, 'timeStamp': time_stamp}
+        
+        requests.post(f'{url}/Faces/OnPersonSpotted', data=form_data, files=file_dict, verify=False)
+
+    
 def __save_then_clear_blacklist(folder_name: str) -> None:
     Path(folder_name).mkdir(exist_ok=True)
 

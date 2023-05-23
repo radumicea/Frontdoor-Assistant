@@ -77,9 +77,11 @@ class BlacklistFragment : Fragment() {
         sharedViewModel.isLoading.observe(viewLifecycleOwner) {
             if (it) {
                 binding.blacklist.visibility = View.GONE
+                binding.addButton.visibility = View.GONE
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
+                binding.addButton.visibility = View.VISIBLE
                 binding.blacklist.visibility = View.VISIBLE
             }
         }
