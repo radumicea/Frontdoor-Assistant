@@ -103,17 +103,9 @@ class SettingsFragment : Fragment() {
 
                     is Result.Error -> {
                         sharedViewModel.isLoading.postValue(false)
-                        if (res.code == 401) {
-                            Snackbar.make(
-                                binding.root,
-                                R.string.session_expired_cannot_refresh,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            Snackbar.make(
-                                binding.root, R.string.request_failed, Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        Snackbar.make(
+                            binding.root, res.code, Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 sharedViewModel.isLoading.postValue(false)

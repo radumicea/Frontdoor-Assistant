@@ -17,8 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import iiotca.frontdoorassistant.R
@@ -98,12 +96,6 @@ class HistoryFragment : Fragment() {
         viewModel.getHistoryResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Result.Success -> {
-                    val dividerItemDecoration = DividerItemDecoration(
-                        binding.history.context,
-                        (binding.history.layoutManager as LinearLayoutManager).orientation
-                    )
-                    binding.history.addItemDecoration(dividerItemDecoration)
-
                     adapter = HistoryAdapter(result.data)
                     requireActivity().invalidateOptionsMenu()
                     binding.history.adapter = adapter

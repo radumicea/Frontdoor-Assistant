@@ -11,7 +11,6 @@
         android:id="@+id/name_tw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
         android:text="@string/prompt_name"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -38,45 +37,37 @@
         android:id="@+id/photos_tw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="12dp"
         android:text="@string/prompt_photos"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/photos"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/photos_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/photos_tw">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photos"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:gravity="top|start"
-            android:inputType="none"
-            android:longClickable="false"
-            android:textIsSelectable="false"
-            tools:ignore="SpeakableTextPresentCheck,VisualLintTextFieldSize" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="512dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </com.google.android.material.card.MaterialCardView>
 
     <Button
         android:id="@+id/select_photos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="14dp"
         android:text="@string/select_photos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photos"
+        app:layout_constraintTop_toBottomOf="@id/photos_cv"
         tools:ignore="TextContrastCheck" />
 
     <ProgressBar

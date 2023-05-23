@@ -2,7 +2,6 @@ package iiotca.frontdoorassistant.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.data.MainDataSource
 import iiotca.frontdoorassistant.data.Result
 import iiotca.frontdoorassistant.data.dto.BlacklistEntry
@@ -37,11 +36,7 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
             }
 
             is Result.Error -> {
-                if (res.code == 401) {
-                    _getNamesResult.postValue(Result.Error(R.string.session_expired_cannot_refresh))
-                } else {
-                    _getNamesResult.postValue(Result.Error(R.string.request_failed))
-                }
+                _getNamesResult.postValue(Result.Error(res.code))
             }
         }
         sharedViewModel.isLoading.postValue(false)
@@ -55,11 +50,7 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
             }
 
             is Result.Error -> {
-                if (res.code == 401) {
-                    _removeError.postValue(R.string.session_expired_cannot_refresh)
-                } else {
-                    _removeError.postValue(R.string.request_failed)
-                }
+                _removeError.postValue(res.code)
             }
         }
         sharedViewModel.isLoading.postValue(false)
@@ -73,11 +64,7 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
             }
 
             is Result.Error -> {
-                if (res.code == 401) {
-                    _addError.postValue(R.string.session_expired_cannot_refresh)
-                } else {
-                    _addError.postValue(R.string.request_failed)
-                }
+                _addError.postValue(res.code)
             }
         }
         sharedViewModel.isLoading.postValue(false)
@@ -91,11 +78,7 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
             }
 
             is Result.Error -> {
-                if (res.code == 401) {
-                    _getHistoryResult.postValue(Result.Error(R.string.session_expired_cannot_refresh))
-                } else {
-                    _getHistoryResult.postValue(Result.Error(R.string.request_failed))
-                }
+                _getHistoryResult.postValue(Result.Error(res.code))
             }
         }
         sharedViewModel.isLoading.postValue(false)

@@ -31,9 +31,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         this.inflater = inflater
@@ -60,7 +58,11 @@ class LoginFragment : Fragment() {
                 is Result.Error -> {
                     Repository.token = ""
                     Repository.refreshToken = ""
-                    Snackbar.make(binding.root, R.string.request_failed, Snackbar.LENGTH_SHORT)
+                    Snackbar.make(
+                        binding.root,
+                        (res as Result.Error<Nothing?>).code,
+                        Snackbar.LENGTH_SHORT
+                    )
                         .show()
                 }
             }

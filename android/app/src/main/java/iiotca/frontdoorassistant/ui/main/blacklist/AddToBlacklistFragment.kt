@@ -3,6 +3,8 @@ package iiotca.frontdoorassistant.ui.main.blacklist
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +15,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -24,8 +28,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import iiotca.frontdoorassistant.R
+import iiotca.frontdoorassistant.afterTextChanged
 import iiotca.frontdoorassistant.databinding.FragmentAddToBlacklistBinding
 import iiotca.frontdoorassistant.ui.main.MainViewModel
 import iiotca.frontdoorassistant.ui.main.MainViewModelFactory
@@ -34,6 +40,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 class AddToBlacklistFragment : Fragment() {
@@ -57,14 +65,14 @@ class AddToBlacklistFragment : Fragment() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.add_to_blacklist_menu, menu)
-                menu.findItem(R.id.action_done).isVisible = paths.size > 0
+                menu.findItem(R.id.action_done).isVisible =
+                    (paths.size > 0 && binding.name.editText!!.text.isNotEmpty())
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 if (menuItem.itemId == R.id.action_done) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         viewModel.addToBlacklist(paths, binding.name.editText!!.text.toString())
-                        requireContext().cacheDir.deleteRecursively()
                     }
                     return true
                 }
@@ -101,6 +109,10 @@ class AddToBlacklistFragment : Fragment() {
             }
         })
 
+        binding.name.editText!!.afterTextChanged {
+            requireActivity().invalidateOptionsMenu()
+        }
+
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
         viewModel = ViewModelProvider(
@@ -113,14 +125,14 @@ class AddToBlacklistFragment : Fragment() {
                 binding.nameTw.visibility = View.GONE
                 binding.name.visibility = View.GONE
                 binding.photosTw.visibility = View.GONE
-                binding.photos.visibility = View.GONE
+                binding.photosCv.visibility = View.GONE
                 binding.selectPhotos.visibility = View.GONE
                 binding.loading.visibility = View.VISIBLE
             } else {
                 binding.loading.visibility = View.GONE
                 binding.nameTw.visibility = View.VISIBLE
                 binding.name.visibility = View.VISIBLE
-                binding.photos.visibility = View.VISIBLE
+                binding.photosCv.visibility = View.VISIBLE
                 binding.photosTw.visibility = View.VISIBLE
                 binding.selectPhotos.visibility = View.VISIBLE
             }
@@ -133,6 +145,8 @@ class AddToBlacklistFragment : Fragment() {
                 Snackbar.make(binding.root, errorId, Snackbar.LENGTH_SHORT).show()
             }
         }
+
+        binding.photos.adapter = PhotosAdapter()
 
         binding.selectPhotos.setOnClickListener {
             askImagePermissionAndHandleSelectImages()
@@ -172,14 +186,14 @@ class AddToBlacklistFragment : Fragment() {
 
     private val getMultipleContentsLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            requireContext().cacheDir.deleteRecursively()
+
             val filePaths = cacheFiles(uris)
 
             paths.clear()
             paths.addAll(filePaths)
 
-            binding.photos.editText!!.setText(filePaths.joinToString(separator = "\n\n") {
-                it.substring(it.lastIndexOf(File.separator) + 1)
-            })
+            (binding.photos.adapter as PhotosAdapter).setItems(filePaths)
         }
 
     private fun cacheFiles(uris: List<Uri>): List<String> {
@@ -222,5 +236,68 @@ class AddToBlacklistFragment : Fragment() {
         }
 
         return result!!
+    }
+
+    inner class PhotosAdapter : RecyclerView.Adapter<PhotosAdapter.FieldViewHolder>() {
+        private var paths = listOf<String>()
+        private val imageCache = mutableMapOf<String, Bitmap>()
+        private val fileNameCache = mutableMapOf<String, String>()
+
+        @SuppressLint("NotifyDataSetChanged")
+        fun setItems(newPaths: List<String>) {
+            paths = newPaths
+            imageCache.clear()
+            fileNameCache.clear()
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FieldViewHolder {
+            val v = LayoutInflater.from(parent.context).inflate(R.layout.photo_card, parent, false)
+            return FieldViewHolder(v)
+        }
+
+        override fun getItemCount(): Int {
+            return paths.size
+        }
+
+        override fun onBindViewHolder(holder: FieldViewHolder, position: Int) {
+            val item = paths[position]
+
+            holder.fileName.text = getCachedFileName(item)
+            holder.photo.setImageBitmap(getCachedImage(item))
+            holder.photo.adjustViewBounds = true
+        }
+
+        private fun getCachedFileName(path: String): String {
+            var x = fileNameCache[path]
+            if (x == null) {
+                x = path.substring(path.lastIndexOf(File.separator) + 1)
+                fileNameCache[path] = x
+            }
+
+            return x
+        }
+
+        private fun getCachedImage(path: String): Bitmap {
+            var x = imageCache[path]
+            if (x == null) {
+                val data = Files.readAllBytes(Paths.get(path))
+                x = BitmapFactory.decodeByteArray(data, 0, data.size)
+                imageCache[path] = x
+            }
+
+            return x!!
+        }
+
+        inner class FieldViewHolder constructor(itemView: View) :
+            RecyclerView.ViewHolder(itemView) {
+            val fileName: TextView
+            val photo: ImageView
+
+            init {
+                fileName = itemView.findViewById(R.id.file_name)
+                photo = itemView.findViewById(R.id.photo)
+            }
+        }
     }
 }

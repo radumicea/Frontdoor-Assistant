@@ -4,6 +4,7 @@ import com.github.kittinunf.fuel.Fuel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
 import iiotca.frontdoorassistant.BuildConfig
+import iiotca.frontdoorassistant.R
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
@@ -13,41 +14,60 @@ object DataSourceHelper {
     private const val address = BuildConfig.ADDRESS
 
     fun refreshToken(): Result<Nothing?> {
-        val statusCode = refreshTokenInternal()
-        return if (statusCode == 0) {
-            Result.Success(null)
-        } else {
-            Result.Error(statusCode)
+        return when (refreshTokenInternal()) {
+            200 -> {
+                Result.Success(null)
+            }
+
+            401 -> {
+                Result.Error(R.string.session_expired_cannot_refresh)
+            }
+
+            else -> {
+                Result.Error(R.string.request_failed)
+            }
         }
     }
 
     fun <RT : Any?> handleError(code: Int, func: () -> Result<RT>): Result<RT> {
         return if (code == 401) {
-            val statusCode = refreshTokenInternal()
-            if (statusCode != 0) {
-                Result.Error(statusCode)
-            } else {
-                func()
+            when (refreshTokenInternal()) {
+                200 -> {
+                    func()
+                }
+
+                401 -> {
+                    Result.Error(R.string.session_expired_cannot_refresh)
+                }
+
+                else -> {
+                    Result.Error(R.string.request_failed)
+                }
             }
         } else {
-            Result.Error(code)
+            Result.Error(R.string.request_failed)
         }
     }
 
     fun <RT : Any?, PT> handleError(
-        code: Int,
-        arg: PT,
-        func: (input: PT) -> Result<RT>
+        code: Int, arg: PT, func: (input: PT) -> Result<RT>
     ): Result<RT> {
         return if (code == 401) {
-            val statusCode = refreshTokenInternal()
-            if (statusCode != 0) {
-                Result.Error(statusCode)
-            } else {
-                func(arg)
+            when (refreshTokenInternal()) {
+                200 -> {
+                    func(arg)
+                }
+
+                401 -> {
+                    Result.Error(R.string.session_expired_cannot_refresh)
+                }
+
+                else -> {
+                    Result.Error(R.string.request_failed)
+                }
             }
         } else {
-            Result.Error(code)
+            Result.Error(R.string.request_failed)
         }
     }
 
@@ -76,6 +96,6 @@ object DataSourceHelper {
             Repository.refreshToken = jsonRes.getString("refreshToken")
         }
 
-        return 0
+        return 200
     }
 }
