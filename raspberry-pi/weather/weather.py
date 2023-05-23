@@ -13,7 +13,7 @@ def __get_weather_alerts():
     user_name = read_config('UserName')
     password = read_config('Password')
 
-    response = requests.post(f'{url}/Weather/FetchWeatherAlerts', json={'userName': user_name, 'password': password}, verify=False)
+    response = requests.post(f'{url}/Weather/FetchWeatherAlerts', json={'userName': user_name, 'password': password})
 
     return response.text
 

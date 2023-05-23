@@ -118,7 +118,7 @@ def __do_request(name: str, time_stamp: int, image_path: str) -> None:
         file_dict = {'file': file}
         form_data = {'userName': user_name, 'password': password, 'name': name, 'timeStamp': time_stamp}
         
-        requests.post(f'{url}/Faces/OnPersonSpotted', data=form_data, files=file_dict, verify=False)
+        requests.post(f'{url}/Faces/OnPersonSpotted', data=form_data, files=file_dict)
 
     
 def __save_then_clear_blacklist(folder_name: str) -> None:
@@ -133,7 +133,7 @@ def __save_then_clear_blacklist(folder_name: str) -> None:
                               'userName': user_name,
                               'password': password
                               },
-                          params={'folderName': folder_name}, verify=False).json()
+                          params={'folderName': folder_name}).json()
 
     for file in files:
         file = file['result']
