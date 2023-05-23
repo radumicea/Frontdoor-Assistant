@@ -6,6 +6,7 @@ import com.github.kittinunf.fuel.core.extensions.authentication
 import com.google.gson.Gson
 import iiotca.frontdoorassistant.BuildConfig
 import iiotca.frontdoorassistant.data.dto.BlacklistEntry
+import iiotca.frontdoorassistant.data.dto.HistoryItem
 import iiotca.frontdoorassistant.data.dto.Location
 import org.json.JSONObject
 
@@ -42,11 +43,9 @@ object MainDataSource {
     }
 
     fun removeFromBlacklist(items: List<String>): Result<Nothing?> {
-        val json = Gson().toJson(items)
-
-        val (_, response, result) = Fuel.post("$protocol://$address${BuildConfig.REMOVE_FROM_BLACKLIST_ROUTE}")
-            .authentication().bearer(Repository.token)
-            .header(mapOf("Content-Type" to "application/json")).body(json.toString()).response()
+        val (_, response, result) = Fuel.delete("$protocol://$address${BuildConfig.REMOVE_FROM_BLACKLIST_ROUTE}",
+            parameters = items.mapIndexed { idx, item -> Pair("folderNames[$idx]", item) })
+            .authentication().bearer(Repository.token).response()
 
         if (result.component2() == null) {
             return Result.Success(null)
@@ -62,8 +61,7 @@ object MainDataSource {
         entry.paths.forEach { path ->
             req = req.add(
                 FileDataPart.from(
-                    path = path,
-                    name = "photos"
+                    path = path, name = "photos"
                 )
             )
         }
@@ -75,5 +73,16 @@ object MainDataSource {
         }
 
         return DataSourceHelper.handleError(response.statusCode, entry, ::addToBlacklist)
+    }
+
+    fun getHistory(): Result<List<HistoryItem>> {
+        val (_, response, result) = Fuel.get("$protocol://$address${BuildConfig.GET_HISTORY_ROUTE}")
+            .authentication().bearer(Repository.token).responseObject(HistoryItem.Deserializer())
+
+        if (result.component2() == null) {
+            return Result.Success(result.component1()!!)
+        }
+
+        return DataSourceHelper.handleError(response.statusCode, ::getHistory)
     }
 }

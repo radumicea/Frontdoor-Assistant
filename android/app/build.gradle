@@ -34,6 +34,7 @@ android {
             buildConfigField "String", "ADD_TO_BLACKLIST_ROUTE", serverProperties['ADD_TO_BLACKLIST_ROUTE']
             buildConfigField "String", "REMOVE_FROM_BLACKLIST_ROUTE", serverProperties['REMOVE_FROM_BLACKLIST_ROUTE']
             buildConfigField "String", "GET_BLACKLIST_NAMES_ROUTE", serverProperties['GET_BLACKLIST_NAMES_ROUTE']
+            buildConfigField "String", "GET_HISTORY_ROUTE", serverProperties['GET_HISTORY_ROUTE']
             buildConfigField "String", "SET_LOCATION_ROUTE", serverProperties['SET_LOCATION_ROUTE']
             buildConfigField "String", "FETCH_WEATHER_ALERTS_ROUTE", serverProperties['FETCH_WEATHER_ALERTS_ROUTE']
         }
@@ -49,6 +50,7 @@ android {
             buildConfigField "String", "ADD_TO_BLACKLIST_ROUTE", serverProperties['ADD_TO_BLACKLIST_ROUTE']
             buildConfigField "String", "REMOVE_FROM_BLACKLIST_ROUTE", serverProperties['REMOVE_FROM_BLACKLIST_ROUTE']
             buildConfigField "String", "GET_BLACKLIST_NAMES_ROUTE", serverProperties['GET_BLACKLIST_NAMES_ROUTE']
+            buildConfigField "String", "GET_HISTORY_ROUTE", serverProperties['GET_HISTORY_ROUTE']
             buildConfigField "String", "SET_LOCATION_ROUTE", serverProperties['SET_LOCATION_ROUTE']
             buildConfigField "String", "FETCH_WEATHER_ALERTS_ROUTE", serverProperties['FETCH_WEATHER_ALERTS_ROUTE']
             minifyEnabled false

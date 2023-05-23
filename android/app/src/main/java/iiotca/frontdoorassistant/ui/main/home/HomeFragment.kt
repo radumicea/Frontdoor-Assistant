@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.databinding.FragmentHomeBinding
 import iiotca.frontdoorassistant.ui.main.SharedViewModel
@@ -52,7 +51,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_navigate_to_blacklist)
         }
         binding.history.setOnClickListener {
-            Snackbar.make(view, "Hello", Snackbar.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_navigate_to_history)
         }
         binding.settings.setOnClickListener {
             findNavController().navigate(R.id.action_navigate_to_settings)

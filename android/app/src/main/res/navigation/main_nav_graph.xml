@@ -17,6 +17,10 @@
         android:id="@+id/action_navigate_to_add_to_blacklist"
         app:destination="@id/destination_add_to_blacklist" />
 
+    <action
+        android:id="@+id/action_navigate_to_history"
+        app:destination="@id/destination_history" />
+
     <fragment
         android:id="@+id/destination_home"
         android:name="iiotca.frontdoorassistant.ui.main.home.HomeFragment"
@@ -40,4 +44,10 @@
         android:name="iiotca.frontdoorassistant.ui.main.blacklist.AddToBlacklistFragment"
         android:label="Add to blacklist"
         tools:layout="@layout/fragment_add_to_blacklist" />
+
+    <fragment
+        android:id="@+id/destination_history"
+        android:name="iiotca.frontdoorassistant.ui.main.history.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
 </navigation>

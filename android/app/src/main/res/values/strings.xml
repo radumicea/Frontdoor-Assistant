@@ -42,4 +42,6 @@
     <string name="prompt_photos">Photos</string>
     <string name="select_photos">Select photos</string>
     <string name="done">Done</string>
+    <string name="hide_unknown">Hide Unknown</string>
+    <string name="show_unknown">Show Unknown</string>
 </resources>

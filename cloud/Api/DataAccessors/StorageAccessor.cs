@@ -40,10 +40,10 @@ public sealed class StorageAccessor
         }
     }
 
-    public async Task<IEnumerable<(string fileName, MemoryStream stream)>> GetBlobs(string containerName, string folderName)
+    public async Task<IEnumerable<(string FileName, MemoryStream Stream)>> GetBlobs(string containerName, string folderName)
     {
         var container = await CreateContainerIfNotExists(containerName);
-        var res = new List<(string fileName, MemoryStream stream)>();
+        var res = new List<(string FileName, MemoryStream Stream)>();
 
         await foreach (var blob in container.GetBlobsAsync(prefix: folderName))
         {

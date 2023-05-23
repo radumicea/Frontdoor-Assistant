@@ -6,6 +6,7 @@ import iiotca.frontdoorassistant.R
 import iiotca.frontdoorassistant.data.MainDataSource
 import iiotca.frontdoorassistant.data.Result
 import iiotca.frontdoorassistant.data.dto.BlacklistEntry
+import iiotca.frontdoorassistant.data.dto.HistoryItem
 
 class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() {
     private lateinit var _getNamesResult: MutableLiveData<Result<MutableList<String>>>
@@ -17,10 +18,14 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
     private lateinit var _addError: MutableLiveData<Int?>
     val addError get() = _addError
 
+    private lateinit var _getHistoryResult: MutableLiveData<Result<List<HistoryItem>>>
+    val getHistoryResult get() = _getHistoryResult
+
     fun init() {
         _getNamesResult = MutableLiveData()
         _removeError = MutableLiveData()
         _addError = MutableLiveData()
+        _getHistoryResult = MutableLiveData()
     }
 
     fun getBlacklistNames() {
@@ -72,6 +77,24 @@ class MainViewModel(private val sharedViewModel: SharedViewModel) : ViewModel() 
                     _addError.postValue(R.string.session_expired_cannot_refresh)
                 } else {
                     _addError.postValue(R.string.request_failed)
+                }
+            }
+        }
+        sharedViewModel.isLoading.postValue(false)
+    }
+
+    fun getHistory() {
+        sharedViewModel.isLoading.postValue(true)
+        when (val res = MainDataSource.getHistory()) {
+            is Result.Success -> {
+                _getHistoryResult.postValue(res)
+            }
+
+            is Result.Error -> {
+                if (res.code == 401) {
+                    _getHistoryResult.postValue(Result.Error(R.string.session_expired_cannot_refresh))
+                } else {
+                    _getHistoryResult.postValue(Result.Error(R.string.request_failed))
                 }
             }
         }

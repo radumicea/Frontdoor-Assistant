@@ -1,11 +1,14 @@
 using Api.Controllers;
 using Api.DataAccessors;
 using Api.Models;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System.Text;
 
 const string myPolicy = "MyPolicy";
@@ -98,6 +101,14 @@ builder.Services.AddSwaggerGen(static c =>
 builder.Services.AddScoped<AppDbContext>();
 builder.Services.AddSingleton<StorageAccessor>();
 builder.Services.AddHttpClient<WeatherController>();
+
+var googleCredentials = builder.Configuration.GetSection("GOOGLE_APPLICATION_CREDENTIALS")
+    .Get<Dictionary<string, object>>();
+
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(googleCredentials))
+});
 
 var app = builder.Build();
 
