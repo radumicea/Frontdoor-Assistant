@@ -141,7 +141,7 @@ public sealed class AuthenticateController : ControllerBase
         var now = DateTime.UtcNow;
 
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= now)
-            return BadRequest("Invalid access token or refresh token!");
+            return Unauthorized("Invalid access token or refresh token!");
 
         var newAccessToken = CreateToken(principal.Claims.ToList(), now);
         var newRefreshToken = GenerateRefreshToken();
