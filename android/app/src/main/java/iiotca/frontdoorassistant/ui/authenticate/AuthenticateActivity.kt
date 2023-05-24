@@ -25,6 +25,7 @@ class AuthenticateActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         viewModel = ViewModelProvider(this)[AuthenticateViewModel::class.java]
+        viewModel.init()
 
         onBackPressedDispatcher.addCallback(
             this@AuthenticateActivity,
