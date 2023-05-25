@@ -5,6 +5,7 @@ import com.github.kittinunf.fuel.core.extensions.authentication
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
 import iiotca.frontdoorassistant.BuildConfig
+import iiotca.frontdoorassistant.R
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +31,11 @@ object AuthenticateDataSource {
         val (str, error) = result
 
         return if (error != null) {
-            Result.Error(response.statusCode)
+            if (response.statusCode == 401) {
+                Result.Error(R.string.wrong_credentials)
+            } else {
+                Result.Error(R.string.request_failed)
+            }
         } else {
             val jsonRes = JSONObject(str!!)
 
@@ -42,24 +47,25 @@ object AuthenticateDataSource {
     }
 
     fun changePassword(
-        userName: String,
-        oldPassword: String,
-        newPassword: String
+        userName: String, oldPassword: String, newPassword: String
     ): Result<Nothing?> {
         val json = JSONObject()
         json.put("userName", userName).put("oldPassword", oldPassword)
             .put("newPassword", newPassword)
 
         val (_, response, result) = Fuel.post("$protocol://$address${BuildConfig.CHANGE_PASSWORD_ROUTE}")
-            .header(mapOf("Content-Type" to "application/json")).body(json.toString())
-            .response()
+            .header(mapOf("Content-Type" to "application/json")).body(json.toString()).response()
 
         val (_, error) = result
 
         return if (error == null) {
             Result.Success(null)
         } else {
-            return Result.Error(response.statusCode)
+            if (response.statusCode == 401) {
+                Result.Error(R.string.wrong_credentials)
+            } else {
+                Result.Error(R.string.request_failed)
+            }
         }
     }
 
@@ -72,7 +78,7 @@ object AuthenticateDataSource {
             Repository.refreshToken = ""
             Result.Success(null)
         } else {
-            Result.Error(response.statusCode)
+            Result.Error(R.string.request_failed)
         }
     }
 }

@@ -55,7 +55,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photos"
             android:layout_width="match_parent"
-            android:layout_height="512dp"
+            android:layout_height="485dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
     </com.google.android.material.card.MaterialCardView>
 
