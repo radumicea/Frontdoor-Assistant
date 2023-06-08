@@ -1,3 +1,4 @@
+from utils.config_helpers import read_config
 import base64
 from collections import Counter
 import os
@@ -11,8 +12,6 @@ import sys
 import requests
 
 sys.path.append('.')
-
-from utils.config_helpers import read_config
 
 
 DEFAULT_ENCODINGS_PATH = Path('output/encodings.pkl')
@@ -40,14 +39,14 @@ def encode_new_faces(
 
     shutil.rmtree(name)
 
-    name_encodings = { 'names': names, 'encodings': encodings }
+    name_encodings = {'names': names, 'encodings': encodings}
 
     if (Path.exists(encodings_location)):
         with encodings_location.open(mode='rb') as f:
             loaded_encodings = pickle.load(f)
             name_encodings['names'].extend(loaded_encodings['names'])
             name_encodings['encodings'].extend(loaded_encodings['encodings'])
-      
+
     with encodings_location.open(mode='wb') as f:
         pickle.dump(name_encodings, f)
 
@@ -55,13 +54,15 @@ def encode_new_faces(
 def remove_encoded_faces(names: list[str], encodings_location: Path = DEFAULT_ENCODINGS_PATH):
     if (not Path.exists(encodings_location)):
         return
-    
+
     f = encodings_location.open(mode='rb')
     loaded_encodings = pickle.load(f)
     f.close()
-    
-    filtered = list(filter(lambda x: x[0] not in names, zip(loaded_encodings['names'], loaded_encodings['encodings'])))
-    loaded_encodings = { 'names': [i[0] for i in filtered], 'encodings': [i[1] for i in filtered] }
+
+    filtered = list(filter(lambda x: x[0] not in names, zip(
+        loaded_encodings['names'], loaded_encodings['encodings'])))
+    loaded_encodings = {
+        'names': [i[0] for i in filtered], 'encodings': [i[1] for i in filtered]}
 
     with encodings_location.open(mode='wb') as f:
         pickle.dump(loaded_encodings, f)
@@ -72,16 +73,24 @@ def recognize_faces(
     model: str = 'hog',
     encodings_location: Path = DEFAULT_ENCODINGS_PATH,
 ) -> None:
-    time_stamp = int(time.time()) 
+    time_stamp = int(time.time())
 
-    with encodings_location.open(mode='rb') as f:
-        loaded_encodings = pickle.load(f)
+    try:
+        with encodings_location.open(mode='rb') as f:
+            loaded_encodings = pickle.load(f)
+    except:
+        loaded_encodings = {'names': [], 'encodings': []}
 
     input_image = face_recognition.load_image_file(image_path)
 
     input_face_locations = face_recognition.face_locations(
         input_image, model=model
     )
+
+    print(input_face_locations)
+
+    if len(input_face_locations) == 0:
+        return False
     input_face_encodings = face_recognition.face_encodings(
         input_image, input_face_locations
     )
@@ -92,8 +101,9 @@ def recognize_faces(
         name = __recognize_face(unknown_encoding, loaded_encodings)
         if not name:
             name = 'Unknown'
-            
+
         __do_request(name, time_stamp, image_path)
+    return True
 
 
 def __recognize_face(unknown_encoding, loaded_encodings):
@@ -107,7 +117,7 @@ def __recognize_face(unknown_encoding, loaded_encodings):
     )
     if votes:
         return votes.most_common(1)[0][0]
-    
+
 
 def __do_request(name: str, time_stamp: int, image_path: str) -> None:
     url = read_config('ApiAddress')
@@ -116,11 +126,13 @@ def __do_request(name: str, time_stamp: int, image_path: str) -> None:
 
     with open(image_path, 'rb') as file:
         file_dict = {'file': file}
-        form_data = {'userName': user_name, 'password': password, 'name': name, 'timeStamp': time_stamp}
-        
-        requests.post(f'{url}/Faces/OnPersonSpotted', data=form_data, files=file_dict)
+        form_data = {'userName': user_name, 'password': password,
+                     'name': name, 'timeStamp': time_stamp}
 
-    
+        requests.post(f'{url}/Faces/OnPersonSpotted',
+                      data=form_data, files=file_dict)
+
+
 def __save_then_clear_blacklist(folder_name: str) -> None:
     Path(folder_name).mkdir(exist_ok=True)
 
@@ -132,7 +144,7 @@ def __save_then_clear_blacklist(folder_name: str) -> None:
                           json={
                               'userName': user_name,
                               'password': password
-                              },
+                          },
                           params={'folderName': folder_name}).json()
 
     for file in files:
