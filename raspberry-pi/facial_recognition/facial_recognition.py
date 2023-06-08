@@ -1,17 +1,17 @@
-from utils.config_helpers import read_config
 import base64
 from collections import Counter
-import os
-import time
 import face_recognition
+import os
 from pathlib import Path
 import pickle
+import requests
 import shutil
 import sys
-
-import requests
+import time
 
 sys.path.append('.')
+
+from utils.config_helpers import read_config
 
 
 DEFAULT_ENCODINGS_PATH = Path('output/encodings.pkl')
@@ -91,6 +91,7 @@ def recognize_faces(
 
     if len(input_face_locations) == 0:
         return False
+    
     input_face_encodings = face_recognition.face_encodings(
         input_image, input_face_locations
     )
@@ -103,6 +104,7 @@ def recognize_faces(
             name = 'Unknown'
 
         __do_request(name, time_stamp, image_path)
+
     return True
 
 
@@ -151,3 +153,7 @@ def __save_then_clear_blacklist(folder_name: str) -> None:
         file = file['result']
         with open(file['fileName'], 'wb') as f:
             f.write(base64.b64decode(file['data']))
+
+
+if __name__ == "__main__":
+    recognize_faces("validation/john.png")

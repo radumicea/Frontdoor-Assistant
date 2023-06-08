@@ -6,3 +6,4 @@ Pillow
 gTTS
 azure-iot-device
 configparser
+pygame
