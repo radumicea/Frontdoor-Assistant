@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="sheet.css" />
+    <script src="script.js"></script>
+  </head>
+  <body id="body">
+    <button onclick="scanAps();">Scan Networks</button>
+    <label id="loading" style="display: none">Loading...</label>
+    <label for="networks">Select Network</label>
+    <select id="networks" onchange="selectionChange(this)">
+      <input
+        type="password"
+        placeholder="ssid password"
+        id="passwordField"
+        style="display: none"
+        onchange="passwordChange()"
+      />
+
+      <input
+        type="text"
+        placeholder="raspberry pi ip"
+        id="ipField"
+        style="display: none"
+        onchange="ipChange()"
+      />
+
+      <button id="connectButton" onclick="connect()" style="display: none">
+        Connect
+      </button>
+    </select>
+  </body>
+</html>
