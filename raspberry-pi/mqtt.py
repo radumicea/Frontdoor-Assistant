@@ -7,7 +7,7 @@ from facial_recognition import facial_recognition
 
 import time
 
-address = "localhost"
+address = "rabbitmq"
 connString = f"mqtt://{address}:1883"
 
 

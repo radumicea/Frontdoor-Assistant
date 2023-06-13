@@ -1,3 +1,4 @@
+from utils.config_helpers import read_config
 from datetime import datetime
 from gtts import gTTS
 from pygame import mixer
@@ -8,12 +9,10 @@ import threading
 
 sys.path.append('.')
 
-from utils.config_helpers import read_config
-
 
 door_lock = threading.Lock()
 
-mixer.init()
+# mixer.init()
 
 
 def __get_weather_alerts():
@@ -30,16 +29,16 @@ def __get_weather_alerts():
 def play_weather_alerts():
     if door_lock.locked():
         return
-    
+
     with door_lock:
         tts = gTTS(__get_weather_alerts())
         name = f'tmp_{datetime.now().timestamp()}.mp3'
         tts.save(name)
-        mixer.music.load(name)
-        mixer.music.play()
-        while mixer.music.get_busy() == True:
-            continue
-        mixer.music.unload()
+        # mixer.music.load(name)
+        # mixer.music.play()
+        # while mixer.music.get_busy() == True:
+        #     continue
+        # mixer.music.unload()
         os.remove(name)
 
 

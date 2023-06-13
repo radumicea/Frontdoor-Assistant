@@ -6,4 +6,6 @@ Pillow
 gTTS
 azure-iot-device
 configparser
+dlib
 pygame
+paho-mqtt
