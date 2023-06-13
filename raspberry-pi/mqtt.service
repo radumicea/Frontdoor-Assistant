@@ -1,0 +1,15 @@
+[Unit]
+Description=MQTT Daemon
+
+[Service]
+WorkingDirectory=/home/{user}/frontdoor-assistant
+ExecStart=/usr/bin/python3 /home/{user}/frontdoor-assistant/mqtt.py
+Restart=always
+# Restart service after 10 seconds if the program:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=mqtt-daemon
+User={user}
+
+[Install]
+WantedBy=multi-user.target
